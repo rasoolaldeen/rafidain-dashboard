@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>بوابة الرافدين - الدخول</title>
+
+<!-- PWA: manifest -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e8720c">
+
+<!-- iOS: تثبيت على الشاشة الرئيسية -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="بوابة الرافدين">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<style>
+  :root {
+    --orange-1: #e8720c;
+    --orange-2: #c9560a;
+    --gold: #d4af37;
+    --gold-light: #f2d377;
+    --bg-dark: #1a1206;
+    --card-bg: #241a0d;
+    --text-light: #fdf6e8;
+    --text-muted: #c9b99a;
+    --error: #ff6b6b;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  }
+  body {
+    background:
+      radial-gradient(circle at 50% 0%, #3a2410 0%, var(--bg-dark) 60%);
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    min-height: 100%;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 440px;
+  }
+  .card {
+    background: linear-gradient(160deg, var(--card-bg) 0%, #1e1509 100%);
+    border: 1px solid rgba(212,175,55,0.35);
+    border-radius: 18px;
+    padding: 36px 28px 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.08) inset;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: -60%;
+    right: -30%;
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(232,114,12,0.25), transparent 70%);
+    pointer-events: none;
+  }
+  .logo {
+    width: 108px;
+    height: 108px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    display: block;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+  }
+  h1 {
+    font-size: 21px;
+    margin: 0 0 4px;
+    color: var(--gold-light);
+    letter-spacing: 0.5px;
+  }
+  .subtitle {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    margin: 0 0 28px;
+  }
+  .field {
+    text-align: right;
+    margin-bottom: 16px;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  input {
+    width: 100%;
+    padding: 13px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(212,175,55,0.3);
+    background: rgba(255,255,255,0.04);
+    color: var(--text-light);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+  }
+  input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+  }
+  button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--orange-1), var(--orange-2));
+    color: #fff;
+    font-size: 15.5px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 8px 20px rgba(232,114,12,0.35);
+  }
+  button:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(232,114,12,0.45); }
+  button:active { transform: translateY(0); }
+  .error {
+    color: var(--error);
+    font-size: 13.5px;
+    margin-top: 14px;
+    min-height: 18px;
+    display: none;
+  }
+  .error.show { display: block; }
+  .footer-note {
+    margin-top: 26px;
+    font-size: 11.5px;
+    color: rgba(201,185,154,0.55);
+    line-height: 1.6;
+  }
+
+  /* Dashboard view */
+  .dash-card {
+    display: none;
+  }
+  .dash-card.show { display: block; }
+  .welcome-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    text-align: right;
+  }
+  .welcome-row .greet { font-size: 14.5px; color: var(--text-muted); }
+  .welcome-row .greet b { color: var(--gold-light); }
+  .logout-btn {
+    background: transparent;
+    border: 1px solid rgba(212,175,55,0.35);
+    color: var(--text-muted);
+    font-size: 12px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    width: auto;
+    margin: 0;
+    box-shadow: none;
+    cursor: pointer;
+  }
+  .logout-btn:hover { transform: none; box-shadow: none; border-color: var(--gold); color: var(--gold-light); }
+
+  .doc-list { display: flex; flex-direction: column; gap: 12px; }
+  .doc-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 12px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: var(--text-light);
+    text-align: right;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .doc-item:hover {
+    background: rgba(212,175,55,0.08);
+    border-color: var(--gold);
+  }
+  .doc-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--orange-1), var(--orange-2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .doc-text { flex: 1; }
+  .doc-title { font-size: 14.5px; font-weight: 600; }
+  .doc-sub { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+  .doc-arrow { color: var(--gold); font-size: 18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Login card -->
+  <div class="card" id="loginCard">
+    <img class="logo" src="icons/icon-512.png" alt="بوابة الرافدين">
+    <h1>بوابة الرافدين</h1>
+    <p class="subtitle">لتجهيز مواد البناء &mdash; داشبورد الشركة</p>
+
+    <div class="field">
+      <label for="nameInput">الاسم</label>
+      <input id="nameInput" type="text" placeholder="اكتب اسمك" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="passInput">كلمة المرور</label>
+      <input id="passInput" type="password" placeholder="••••••" autocomplete="off">
+    </div>
+    <button id="loginBtn" onclick="tryLogin()">دخول</button>
+    <div class="error" id="errorMsg">الاسم أو كلمة المرور غير صحيحة</div>
+
+    <p class="footer-note">وصول داخلي مخوّل فقط &mdash; هذه الصفحة لأغراض الشركة الداخلية</p>
+  </div>
+
+  <!-- Dashboard card -->
+  <div class="card dash-card" id="dashCard">
+    <img class="logo" src="icons/icon-512.png" alt="بوابة الرافدين" style="width:64px;height:64px;margin-bottom:12px;">
+    <div class="welcome-row">
+      <span class="greet">أهلاً، <b id="greetName"></b></span>
+      <button class="logout-btn" onclick="logout()">تسجيل خروج</button>
+    </div>
+    <div class="doc-list" id="docList"></div>
+    <p class="footer-note">اضغط على أي عنصر لفتحه في تبويب جديد</p>
+  </div>
+
+</div>
+
+<script>
+  // قائمة الأسماء وكلمات المرور المصرّح لها بالدخول
+  var ALLOWED_USERS = {
+    "الادارة": "1324",
+    "الإدارة": "1324",
+    "المحاسب": "1324",
+    "احمد": "1324",
+    "أحمد": "1324"
+  };
+
+  // قائمة ملفات الداشبورد
+  var DASHBOARD_LINKS = [
+    {
+      title: "الواجهة الرئيسية",
+      sub: "فتح لوحة الملفات والروابط",
+      url: "https://drive.google.com/file/d/1XlKUoGOkZmnXb-oHFUOOGltPArMRM91B/view?usp=sharing",
+      icon: "📁"
+    }
+  ];
+
+  function normalize(s) {
+    return (s || "").trim();
+  }
+
+  function tryLogin() {
+    var name = normalize(document.getElementById('nameInput').value);
+    var pass = normalize(document.getElementById('passInput').value);
+    var errorEl = document.getElementById('errorMsg');
+
+    if (!name || !pass) {
+      errorEl.textContent = "الرجاء إدخال الاسم وكلمة المرور";
+      errorEl.classList.add('show');
+      return;
+    }
+
+    if (ALLOWED_USERS.hasOwnProperty(name) && ALLOWED_USERS[name] === pass) {
+      errorEl.classList.remove('show');
+      showDashboard(name);
+      try {
+        sessionStorage.setItem('rafidain_user', name);
+      } catch (e) { /* تجاهل إن لم يتوفر التخزين */ }
+    } else {
+      errorEl.textContent = "الاسم أو كلمة المرور غير صحيحة";
+      errorEl.classList.add('show');
+    }
+  }
+
+  function buildDocList() {
+    var container = document.getElementById('docList');
+    container.innerHTML = "";
+    DASHBOARD_LINKS.forEach(function(item) {
+      var a = document.createElement('a');
+      a.className = 'doc-item';
+      a.href = item.url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.innerHTML =
+        '<div class="doc-icon">' + item.icon + '</div>' +
+        '<div class="doc-text">' +
+          '<div class="doc-title">' + item.title + '</div>' +
+          '<div class="doc-sub">' + item.sub + '</div>' +
+        '</div>' +
+        '<div class="doc-arrow">‹</div>';
+      container.appendChild(a);
+    });
+  }
+
+  function showDashboard(name) {
+    document.getElementById('greetName').textContent = name;
+    document.getElementById('loginCard').classList.remove('show');
+    document.getElementById('loginCard').style.display = 'none';
+    document.getElementById('dashCard').classList.add('show');
+    buildDocList();
+  }
+
+  function logout() {
+    try { sessionStorage.removeItem('rafidain_user'); } catch (e) {}
+    document.getElementById('dashCard').classList.remove('show');
+    document.getElementById('loginCard').style.display = 'block';
+    document.getElementById('nameInput').value = '';
+    document.getElementById('passInput').value = '';
+  }
+
+  // السماح بالضغط على Enter لتسجيل الدخول
+  document.addEventListener('DOMContentLoaded', function() {
+    var passInput = document.getElementById('passInput');
+    var nameInput = document.getElementById('nameInput');
+    [nameInput, passInput].forEach(function(el) {
+      el.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') tryLogin();
+      });
+    });
+
+    // استرجاع الجلسة إن وجدت
+    try {
+      var saved = sessionStorage.getItem('rafidain_user');
+      if (saved && ALLOWED_USERS.hasOwnProperty(saved)) {
+        showDashboard(saved);
+      }
+    } catch (e) { /* تجاهل */ }
+  });
+
+  // تسجيل Service Worker لتفعيل خاصية PWA (تثبيت كأيقونة)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('./service-worker.js').catch(function() {
+        /* تجاهل أي خطأ بالتسجيل */
+      });
+    });
+  }
+</script>
+</body>
+</html>
